@@ -15,3 +15,36 @@ code {
 }
 
 
+/* SearchBar.css */
+.search-bar {
+  padding: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .search-bar {
+    width: 85%;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .search-bar {
+    width: 30%;
+  }
+
+  .search-bar-small {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .search-bar {
+    width: 50%;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .search-bar {
+    width: 30%;
+  }
+}
+

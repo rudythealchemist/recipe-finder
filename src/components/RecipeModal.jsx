@@ -9,12 +9,11 @@ import {
 import { fetchRecipeSummary } from "../utils/api";
 import parse from "html-react-parser"; // Import the parser
 
-
 // Define the RecipeModal component
 const RecipeModal = ({ open, handleClose, recipe }) => {
-  const [title, setTitle] = useState("");
-  const [summary, setSummary] = useState("");
-  const [isFetchingSummary, setIsFetchingSummary] = useState(false); // Add a state for loading
+  const [title, setTitle] = useState(""); // State for the recipe title
+  const [summary, setSummary] = useState(""); // State for the recipe summary
+  const [isFetchingSummary, setIsFetchingSummary] = useState(false); // State for loading
 
   useEffect(() => {
     // Fetch summary when the modal is opened
@@ -23,8 +22,8 @@ const RecipeModal = ({ open, handleClose, recipe }) => {
       if (recipe) {
         const { title, summary } = await fetchRecipeSummary({ recipe });
         if (title && summary) {
-          setTitle(title); // Set the title
-          setSummary(summary); // Set the summary
+          setTitle(title); // Set the title state
+          setSummary(summary); // Set the summary state
         } else {
           console.error("Failed to fetch recipe summary");
         }
@@ -33,18 +32,20 @@ const RecipeModal = ({ open, handleClose, recipe }) => {
       }
       setIsFetchingSummary(false); // Set loading state to false after fetching
     };
-// Fetch summary when the modal is opened
+
+    // Fetch summary when the modal is opened
     if (open) {
       fetchSummary();
     }
-  }, [open, recipe]); // Re-fetch summary when recipe changes
+  }, [open, recipe]); // Re-fetch summary when either `open` or `recipe` changes
 
   return (
     <Modal open={open} onClose={handleClose}>
       <Box sx={{ ...modalStyle }}>
         {isFetchingSummary ? (
           <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <CircularProgress />
+            {/* Change the color of CircularProgress to orange */}
+            <CircularProgress sx={{ color: "orange" }} />
           </Box>
         ) : (
           <>
@@ -59,15 +60,15 @@ const RecipeModal = ({ open, handleClose, recipe }) => {
               }}
             >
               {title}
-            </Typography>{" "}
+            </Typography>
+            {/* Display Summary */}
             <Box sx={{ lineHeight: 2, fontSize: "1.2rem" }}>
               {parse(summary)}
-              {/* Display Summary */}
             </Box>
           </>
         )}
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Button onClick={handleClose}>Close</Button>
+          <Button sx={{ backgroundColor: "orange", color: "white" }} onClick={handleClose}>Close</Button>
         </Box>
       </Box>
     </Modal>

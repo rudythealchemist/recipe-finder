@@ -1,30 +1,31 @@
 // src/pages/HomePage.jsx
 import React from "react";
-import { Box } from "@mui/material";
-import SearchResults from "../components/SearchResults";
+import { Box, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import RecipeCard from "../components/RecipeCard";
 import { useSelector } from "react-redux";
-import { Typography } from "@mui/material";
 
 const HomePage = () => {
   const searchResults = useSelector((state) => state.search.searchResults);
 
   return (
-    <Box align="center" justifycontent="center">
+    <Box>
       {!searchResults.length ? (
-        <Typography
-          variant="h5"
-          component="p"
-          gutterBottom
-          align="center"
-          sx={{ margin: 2 }}
-        >
+        <Typography variant="h5" align="center" sx={{ margin: 2 }}>
           Please search for a recipe.
         </Typography>
       ) : (
-        <SearchResults />
+        <Grid container spacing={2} margin={2} >
+          {searchResults.map((recipe) => (
+            <Grid key={recipe.id} size={{ xs: 12, sm: 6, md: 4,lg:3 }}>
+              <RecipeCard recipe={recipe} />
+            </Grid>
+          ))}
+        </Grid>
       )}
     </Box>
   );
 };
 
 export default HomePage;
+

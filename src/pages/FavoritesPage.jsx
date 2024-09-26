@@ -1,48 +1,51 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import RecipeCard from "../components/RecipeCard";
-import { Grid2 as Grid} from "@mui/material";
+import React from "react"; // Import React library
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"; // Import routing components from React Router
+import HomePage from "../pages/HomePage"; // Import the HomePage component
+import FavoritesPage from "../pages/FavoritesPage"; // Import the FavoritesPage component
+import { IconButton } from "@mui/material"; // Import IconButton component from Material-UI
+import HomeIcon from "@mui/icons-material/Home"; // Import home icon
+import FavoriteIcon from "@mui/icons-material/Favorite"; // Import favorite icon
+import store from "../redux/store"; // Import the Redux store
+import { Provider } from "react-redux"; // Import Provider for Redux
+import Header from "../components/Header"; // Import the Header component
 
-/**
- * Component that displays a list of favorite recipes.
- */
-const FavoritesPage = () => {
-  // Get the list of favorite recipes from the Redux store
-  const favoriteRecipes = useSelector((state) => state.recipes.favoriteRecipes);
-
-  if (!favoriteRecipes) {
-    return <p>Loading...</p>;
-  }
-
+// Define the main App component
+const App = () => {
   return (
-    // Use a Grid component to display the favorite recipes in a responsive layout
-  
-      <Grid 
-        container
-        spacing={5}
-        padding={2}
-        direction="row"
-        margin={2}
-      >
-        {/* // If there are no favorite recipes, display a message */}
-        {favoriteRecipes.length === 0 ? (
-          <p>No favorites found!</p>
-        ) : (
-          // Otherwise, map over the favorite recipes and render a RecipeCard component for each one
-          favoriteRecipes.map((recipe) => (
-            <Grid
-              item="true"
-              xs={12}
-              sm={6}
-              md={4}
-              key={recipe.id}
-            >
-              <RecipeCard recipe={recipe} />
-            </Grid>
-          ))
-        )}
-      </Grid>
+    <Provider store={store}>
+      {" "}
+      {/* Wrap the application in the Redux Provider to provide the store to the app */}
+      <Router>
+        {" "}
+        {/* Set up routing using BrowserRouter */}
+        <Header position="static">
+          {" "}
+          {/* Render the Header component with static positioning */}
+          {/* Links for navigation using IconButtons */}
+          <IconButton component={Link} to="/" aria-label="home">
+            {" "}
+            {/* Navigate to home page */}
+            <HomeIcon /> {/* Home icon */}
+          </IconButton>
+          <IconButton component={Link} to="/favorites" aria-label="favorites">
+            {" "}
+            {/* Navigate to favorites page */}
+            <FavoriteIcon /> {/* Favorite icon */}
+          </IconButton>
+        </Header>
+        <Routes>
+          {" "}
+          {/* Route to home page */}
+          <Route path="/" element={<HomePage />} exact />{" "}
+          {/* Route to favorites page */}
+          <Route path="/favorites" element={<FavoritesPage />} exact />{" "}
+          {/* Handle unknown routes and display a message */}
+          <Route path="*" element={<p>Page not found</p>} />{" "}
+        </Routes>
+      </Router>
+    </Provider>
   );
 };
 
-export default FavoritesPage;
+// Export the App component for use in other parts of the app
+export default App;
