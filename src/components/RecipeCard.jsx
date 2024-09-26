@@ -1,26 +1,30 @@
-import React, { useState } from "react";
+// Import necessary components from React and Material-UI
+import React, { useState, memo } from "react";
 import {
   Card,
   CardContent,
   CardMedia,
   Typography,
-  Button,
   Box,
+  Button,
 } from "@mui/material";
+import RecipeModal from "./RecipeModal";
 import { useDispatch, useSelector } from "react-redux";
 import { addFavorite, removeFavorite } from "../redux/actions/recipeActions";
-import axios from "axios";
-import RecipeModal from "./Modal"; // Import the modal component
 
-const RecipeCard = ({ recipe }) => {
+// Memoize the RecipeCard component to prevent unnecessary re-renders
+const RecipeCard = memo(({ recipe }) => {
   const dispatch = useDispatch();
-  const favorites = useSelector((state) => state.recipes.favoriteRecipes);
-  const isFavorite = favorites.find((fav) => fav.id === recipe.id);
-  const [summary, setSummary] = useState("");
-  const [error, setError] = useState("");
-  const [modalOpen, setModalOpen] = useState(false); // State for modal open/closed
+  const favoriteRecipes = useSelector((state) => state.recipes.favoriteRecipes);
+  const [modalOpen, setModalOpen] = useState(false); // State to control modal visibility
 
-  const handleToggleFavorite = () => {
+  // Check if the recipe is a favorite
+  const isFavorite = favoriteRecipes.some(
+    (favoriteRecipe) => favoriteRecipe.id === recipe.id
+  );
+
+  // Handle favorite button click
+  const handleFavoriteClick = () => {
     if (isFavorite) {
       dispatch(removeFavorite(recipe.id));
     } else {
@@ -28,97 +32,61 @@ const RecipeCard = ({ recipe }) => {
     }
   };
 
-  // API key imported from .env file
-  const apiKey = process.env.REACT_APP_SPOONACULAR_API_KEY;
-
-  // Fetch recipe summary from API
-  const fetchRecipeSummary = async () => {
-    try {
-      const response = await axios.get(
-        `https://api.spoonacular.com/recipes/${recipe.id}/summary?apiKey=${apiKey}`
-      );
-      setSummary(response.data.summary);
-      setError("");
-      setModalOpen(true); // Open modal on successful fetch
-    } catch (err) {
-      setError("Failed to fetch recipe summary. Please try again.");
-      console.error("Error fetching recipe summary:", err);
-    }
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false); // Close the modal
-  };
+  // Handle modal open and close
+  const handleOpenModalSummary = () => setModalOpen(true);
+  const handleCloseModalSummary = () => setModalOpen(false);
 
   return (
-    <Card
-      sx={{
-        margin: 2,
-        height: "300px",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <CardMedia
-        component="img"
-        alt={recipe.title}
-        height="140"
-        sx={{ objectFit: "cover" }}
-        src={recipe.image}
-        image={recipe.image}
-      />
-      <CardContent
+    <Box sx={{  margin: "auto", height: "100%" }}>
+      <Card
         sx={{
-          flexGrow: 1,
+          width: "100%",
+          height: "100%",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
         }}
       >
-        <Typography variant="h5" gutterBottom>
-          {recipe.title}
-        </Typography>
-        {error && (
-          <Typography color="error" align="center">
-            {error}
-          </Typography>
-        )}
-        <Box
-          sx={{
-            margin: "auto",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "100%",
-            marginBottom: "0",
-          }}
+        <CardMedia
+          component="img"
+          height="140"
+          image={recipe.image}
+          alt={recipe.title}
+        />
+        <CardContent
+          sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
         >
-          <Button
-            onClick={handleToggleFavorite}
-            color={isFavorite ? "error" : "primary"}
-            sx={{ padding: 0 }}
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{
+              flexGrow: 1,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: 1, // Number of lines to show
+              WebkitBoxOrient: "vertical",
+            }}
           >
-            {isFavorite ? "Remove Favorite" : "Add to Favorites"}
-          </Button>
-          <Button
-            onClick={fetchRecipeSummary}
-            color="secondary"
-            sx={{ padding: 0 }}
-          >
-            Recipe Summary
-          </Button>
-        </Box>
-      </CardContent>
-      {/* Render the modal and pass relevant props */}
-      <RecipeModal
-        open={modalOpen}
-        handleClose={handleCloseModal}
-        title={recipe.title}
-        summary={summary}
-      />
-    </Card>
+            {recipe.title}
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+            <Button
+              color={isFavorite ? "secondary" : "primary"}
+              onClick={handleFavoriteClick}
+            >
+              {isFavorite ? "Unfavorite" : "Add Favorite"}
+            </Button>
+            <Button onClick={handleOpenModalSummary}>Details</Button>
+            <RecipeModal
+              open={modalOpen}
+              handleClose={handleCloseModalSummary}
+              recipe={recipe}
+            />
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
   );
-};
+});
 
-export default RecipeCard; // Export the RecipeCard component
+export default RecipeCard;
