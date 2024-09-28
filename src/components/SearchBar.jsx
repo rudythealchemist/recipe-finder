@@ -78,7 +78,7 @@ const SearchBar = () => {
             endAdornment: (
               <InputAdornment position="end">
                 {" "}
-                 {/* Position the adornment at the end of the input */}
+                {/* Position the adornment at the end of the input */}
                 {isLoading ? ( // Conditional rendering based on loading state
                   <CircularProgress size={24} /> // Show loader when searching
                 ) : (
@@ -98,7 +98,7 @@ const SearchBar = () => {
         onClose={() => setOpen(false)} // Close handler
       >
         <Alert severity="error" sx={{ width: "100%" }}>
-          Please enter a search query // Alert message for empty search query
+          Please enter a search query
         </Alert>
       </Snackbar>
 
@@ -108,7 +108,7 @@ const SearchBar = () => {
         onClose={() => setHasSearched(false)} // Reset search state on close
       >
         <Alert severity="info" sx={{ width: "100%" }}>
-          No results found, try something else. // Alert message for no results
+          No results found, try something else.
         </Alert>
       </Snackbar>
 
